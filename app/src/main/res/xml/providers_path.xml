@@ -1,0 +1,7 @@
+<paths>
+    <files-path
+        name="dataar"
+        path="."/>
+    <root-path name="external_files" path="/" />
+</paths>
+
