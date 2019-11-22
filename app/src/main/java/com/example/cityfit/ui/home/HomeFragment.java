@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -68,6 +69,9 @@ public class HomeFragment extends Fragment {
     TextView goal;
     Long min = 0l;
     long value;
+    TextView pressure;
+    TextView humidity;
+
     DocumentReference leaderboardNoteRef;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -87,10 +91,10 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        temperature = root.findViewById(R.id.textTemperature);
+
         DecoView decoView = root.findViewById(R.id.dynamicArcView);
 
-        callAsynchronousTask();
+//        callAsynchronousTask();
 
         leaderboardNoteRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -278,145 +282,10 @@ public class HomeFragment extends Fragment {
 
 
     }
-
-    public void callAsynchronousTask() {
-        final Handler handler = new Handler();
-        Timer timer = new Timer();
-        TimerTask doAsynchronousTask = new TimerTask() {
-            @Override
-            public void run() {
-                handler.post(new Runnable() {
-                    public void run() {
-                        try {
-                            JSONWeatherTask task = new JSONWeatherTask();
-                            task.execute();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                        }
-                    }
-                });
-            }
-        };
-        timer.schedule(doAsynchronousTask, 0, 60000); //execute in every 50000 ms
-    }
-
-    private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
-        @Override
-        protected Weather doInBackground(String... params) {
-            Weather weather = new Weather();
-            String data = ((new WeatherHttpClient()).getWeatherData());
-            if (data != null) {
-                try {
-                    weather = JSONWeatherParser.getWeather(data);
-
-
-                } catch (JSONException e) {
+}
 //
-                }
-            }
-            return weather;
-        }
-
-//                Log.d("entered do inback", "yes entered");
-
-
-//                    if (data != null) {
-//
-//                        Log.d("entered do inback", "yes entered");
-//
-//
-//                        try {
-//                            weather = JSONWeatherParser.getWeather(data);
-//                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-//                            Date date = new Date();
-//                            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//                            leaderboardNoteRef = db.collection("leaderboard")
-//                                    .document(dateFormat.format(date)).collection("users").document(userId);
-//
-//                            final String val = String.valueOf(weather.temperature.getTemp());
-//                            Leaderboard leaderboard = new Leaderboard();
-//                            leaderboard.setWeather(weather);
-//                            Log.d("Created new note outs", val);z
-
-//                            leaderboardNoteRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                                    if (task.isSuccessful()) {
-//                                        DocumentSnapshot doc = task.getResult();
-//                                        if (doc != null) {
-//                                            setLeaderboard(doc.getId(),(Long)doc.get("seconds"));
-//                                        }
-//
-//                                    }
-//                                }
-//
-//
-//                            })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.getStackTraceString(e.fillInStackTrace());
-//                                            Log.e("REACHEDHERE", "HAHAHA");
-//                                        }
-//                                    });
 
 //
-//                        }catch(JSONException e){
-//                            Log.e("In back", e.getLocalizedMessage());
-//                        }
-//            }
-//
-//            // Let's retrieve the icon
-////                weather.iconData = ((new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
-//        }
-//
-//            return weather;
-//
-//        }
-
-
-
-        @Override
-        protected void onPostExecute(Weather weather) {
-            super.onPostExecute(weather);
-
-            //task 1 : print temperature on home screen
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = new Date();
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-            double val = weather.temperature.getTemp() - 273.15;
-            temperature.setText(String.valueOf(val));
-
-            // task 2 : print other stuff on home screen.
-
-                }
-            }
-        }
-
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//
-//            case R.id.menuLogout:
-//                Toast.makeText(getContext(), "Item 1 selected", Toast.LENGTH_SHORT).show();
-//                return true;
-//
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
-//
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-////        getActivity().getMenuInflater();
-//        //menu.clear();
-////        inflater = inflater.inflate();
-//        inflater.inflate(R.menu.menu_toolbar, menu);
-
-            // }
 
 
 

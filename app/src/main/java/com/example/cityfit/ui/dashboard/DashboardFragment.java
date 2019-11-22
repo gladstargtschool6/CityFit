@@ -1,5 +1,11 @@
 package com.example.cityfit.ui.dashboard;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,11 +15,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.cityfit.City;
+import com.example.cityfit.HomeScreen;
 import com.example.cityfit.R;
 import com.example.cityfit.data.model.Leaderboard;
 import com.example.cityfit.data.model.Leaderboard;
@@ -29,6 +38,9 @@ import com.google.firebase.firestore.Query;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 
 public class DashboardFragment extends Fragment {
@@ -41,10 +53,12 @@ public class DashboardFragment extends Fragment {
     private FirebaseAuth mAuth;
 
     RecyclerView friendList;
+    String city;
 
     private FirebaseFirestore db;
     private FirestoreRecyclerAdapter<Leaderboard, DashboardFragment.FriendsHolder> adapter;
     LinearLayoutManager linearLayoutManager;
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_leaderboard, container, false);
@@ -54,17 +68,28 @@ public class DashboardFragment extends Fragment {
         db =  FirebaseFirestore.getInstance();
         linearLayoutManager = new LinearLayoutManager(root.getContext(), LinearLayoutManager.VERTICAL, false);
         friendList.setLayoutManager(linearLayoutManager);
-       getFriendList();
+       getFriendList(root);
 //        textName = root.findViewById(R.id.textView1);
         return root;
     }
 
-    private void getFriendList(){
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void getFriendList(View context){
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date();
-
-        Query query = db.collection("leaderboard")
-                .document(dateFormat.format(date)).collection("users").orderBy("seconds", Query.Direction.DESCENDING);
+        HomeScreen homeScreen = new HomeScreen();
+        String city = getCity(getContext());
+        Query query;
+        if (city != null) {
+            Log.d("MyCityNameNotification", city);
+           query= db.collection("leaderboard").document(city)
+                    .collection(dateFormat.format(date)).orderBy("seconds", Query.Direction.DESCENDING);
+        } else {
+            query = db.collection("leaderboard").document("unknown")
+                    .collection(dateFormat.format(date)).orderBy("seconds", Query.Direction.DESCENDING);
+        }
+//        Query query = db.collection("leaderboard")
+//                .document(dateFormat.format(date)).collection("users").orderBy("seconds", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Leaderboard> response = new FirestoreRecyclerOptions.Builder<Leaderboard>()
                 .setQuery(query, Leaderboard.class)
@@ -100,12 +125,60 @@ public class DashboardFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull FriendsHolder friendsHolder, int i, @NonNull Leaderboard leaderboard) {
-                friendsHolder.setLeaderboardValues(i+1, leaderboard.getUserId(), leaderboard.getSeconds());
+                if (leaderboard.getSeconds()!=null) {
+                    friendsHolder.setLeaderboardValues(i + 1, leaderboard.getUserId(), leaderboard.getSeconds());
+                }
+                else{
+                    friendsHolder.setLeaderboardValues(i + 1, leaderboard.getUserId(), 0);
+                }
             }
         };
 
         adapter.notifyDataSetChanged();
         friendList.setAdapter(adapter);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public String getCity(Context context) {
+        LocationManager mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        try {
+            if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && getActivity().checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    Activity#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return "missing value";
+            }
+
+            List<String> providers = mLocationManager.getProviders(true);
+            Location bestLocation = null;
+            Double longitude = 0.0;
+            Double latitude = 0.0;
+            for (String provider : providers) {
+                Location l = mLocationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                    longitude = l.getLongitude();
+                    latitude = l.getLatitude();
+                }
+            }
+
+            city = City.getAddress(getContext(), latitude, longitude);
+//            Toast.makeText(this,"Welcome"+ city+"person!",Toast.LENGTH_LONG).show();
+            Log.d("MY CITY NAME", city);
+        }
+        catch (NullPointerException e){
+            Log.d("NULL", "NULL");
+        }
+
+        return city;
     }
 
 
@@ -117,7 +190,7 @@ public class DashboardFragment extends Fragment {
             view = itemView;
         }
 
-        void setLeaderboardValues(int rank, String name,Long seconds) {
+        void setLeaderboardValues(int rank, String name,long seconds) {
             TextView textView = view.findViewById(R.id.textView1);
             TextView textView1 = view.findViewById(R.id.textView2);
             TextView textView2 = view.findViewById(R.id.textView3);
@@ -129,22 +202,7 @@ public class DashboardFragment extends Fragment {
         }
     }
 
-//    public class FriendsHolder extends RecyclerView.ViewHolder {
-//
-//
-//
-//
-//
-//
-//     TextView textName;
-//
-//        public FriendsHolder(View itemView) {
-//            super(itemView);
-//            textName = itemView.findViewById(R.id.textView1);
-//
-//
-//        }
-//    }
+
 
     @Override
     public void onStart() {
