@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+   >
 
 
     <LinearLayout
@@ -10,6 +11,16 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/buttonHistory"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:layout_weight="1"
+            android:background="#304FFE"
+            android:text="History"
+            android:textColor="#FFFFFF" />
 
         <ImageView
             android:id="@+id/img_activity"
@@ -62,8 +73,10 @@
         android:id="@+id/btn_start_tracking"
         android:layout_width="158dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="67dp"
         android:background="#070707"
         android:text="Start Tracking"
         android:textColor="#FCFBFB" />
@@ -72,27 +85,13 @@
         android:id="@+id/btn_stop_tracking"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="68dp"
         android:background="#0A0A0A"
         android:text="Stop Tracking"
         android:textColor="#FAF8F8" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Track" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="History" />
-
-
-    </com.google.android.material.tabs.TabLayout>
 
 </RelativeLayout>
