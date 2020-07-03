@@ -9,7 +9,7 @@ For this I have coded a Background Detector Service class which detects activity
  
 With this, I also continuously gather data for a particular interval of time which I then add and store it on cloud all together under respective user’s document. The reason for this is to reduce network calls which will in return optimize battery usage.This data is divided into different fields like Walking, Running, Cycling, Driving, On Foot, On Bicycle, Still, Tilting. And then I update these fields as activities are detected. To calculate time I have used Hash Maps which helps me easily map seconds to each activity types. 
  
-####### For OpenWeatherMap API : 
+###### For OpenWeatherMap API : 
 I am using a HttpClient service, that helps me connect to the URL using my API key and current city I am in, and then I use a JSON Parser file in which I have defined the structure of response to parse every field and use it in my app. 
  
 
@@ -17,7 +17,7 @@ I am using a HttpClient service, that helps me connect to the URL using my API k
 The data was stored on Firestore in a format where a user’s data was stored under its own city document. Which helps generate leaderboard city wise. The Dashboard of the app uses both weather and user data and shows the current status that is Current temperature and total minutes active for the day. Wind levels, Clouds, Humidity, city name and condition description. The aim of this is for the user to also get a visualisation of how they perform in different weather conditions. 
 
 ### An overview 
-
+![Architecture](architecture.png)
 
  
 ### Data visualisation and actuation
@@ -27,11 +27,13 @@ Dashboard : Visualisation of current weather current and Total minutes spent dur
 Leaderboard : List of all city users (using this app) and their active minutes and rank. 
 Track activity : Details descriptions of the activity. (View Track details)
  
-Data visualisation and/or actuation 
- 
-Allowing multiple user instances. 
- 
-Login  						Registration 
+![login](login.png)
+
+![Layout1](layout1.png)
+
+![layout2](layout2.png)
+
+![Activities](activities.png)
           
  
  
