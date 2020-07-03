@@ -13,7 +13,7 @@ With this, I also continuously gather data for a particular interval of time whi
 I am using a HttpClient service, that helps me connect to the URL using my API key and current city I am in, and then I use a JSON Parser file in which I have defined the structure of response to parse every field and use it in my app. 
  
 
-###### Data fusion and analysis algorithm implementation
+#### Data fusion and analysis algorithm implementation
 The data was stored on Firestore in a format where a user’s data was stored under its own city document. Which helps generate leaderboard city wise. The Dashboard of the app uses both weather and user data and shows the current status that is Current temperature and total minutes active for the day. Wind levels, Clouds, Humidity, city name and condition description. The aim of this is for the user to also get a visualisation of how they perform in different weather conditions. 
 
 ### An overview 
